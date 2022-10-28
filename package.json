@@ -1,0 +1,18 @@
+{
+	"name": "com.omnislash.sdk",
+	"version": "0.1.0-preview",
+	"displayName": "Omnislash SDK",
+	"description": "The Omnislash SDK lets you capture media and game data to help players share their matches with the community.",
+	"author": {
+		"name": "Omnislash Inc",
+		"email": "michael@omnislash.com",
+		"url": "https://omnislash.com"
+	},
+	"samples": [
+		{
+			"displayName": "Omnislash SDK Sample",
+			"description": "Sample scene to show how to integrate the SDK, change player status and take screenshots.",
+			"path": "Samples~/OmniSdkSample"
+		}
+	]
+}
