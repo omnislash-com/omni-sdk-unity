@@ -5,71 +5,140 @@ using AOT;
 
 namespace omnislash_sdk
 {
+	public	enum	LogLevel
+	{
+		Info = 1,
+		Warning = 2,
+		Error = 3,
+		None = 4
+	}
+
 	public	class	OmniSdk
 	{
-		public	OmniSdk()
+		public	static	bool	Init(string _developerKey, string _gameKey, LogLevel _logLevel = LogLevel.Info)
+		{
+			// set up logs
+			bool	ok = OmniSdk.SetUpLogs(_logLevel);
+			if (ok == false)
+				return false;
+
+			// init
+			ok = OmniSdk.Instance.init(_developerKey, _gameKey);
+			if (ok == false)
+				return false;
+
+			return true;		
+		}
+
+		public	static	void	Destroy()
+		{
+			lock(OmniSdk.padlock)
+			{
+				if (OmniSdk.instance != null)
+				{
+					OmniSdk.instance.destroy();
+					OmniSdk.instance = null;
+				}
+			}
+		}
+
+
+
+		private	static	OmniSdk				instance = null;
+		private	static	readonly	object	padlock = new object();
+
+
+		private	static	OmniSdk	Instance
+		{
+			get
+			{
+				lock(OmniSdk.padlock)
+				{
+					if (OmniSdk.instance == null)
+					{
+						OmniSdk.instance = new OmniSdk();
+					}
+					return OmniSdk.instance;
+				}
+			}
+		}
+
+		private	static	bool	SetUpLogs(LogLevel _logLevel = LogLevel.Info)
 		{
 			try
 			{
-				Debug.Log("1. Set up callback");
-				OmniSdkInterfaceOSX.RegisterDebugCallback(OnDebugCallback);
+				// set up the log callback
+				OmniSdkInterface.registerDebugCallback(OnDebugCallback);
 
-				Debug.Log("3. Done");
+				// set the log level
+				OmniSdkInterface.setLogLevel((int) _logLevel);
+
+				return true;
 			}
 			catch(Exception e)
 			{
 				Debug.LogError("OmniSdk.cosntructor: Exception caught.");
 				Debug.LogError(e.Message);
-			}
+
+				return false;
+			}			
 		}
 
-		public	void	init()
+		private	OmniSdk()
+		{
+		}
+
+		private	bool	init(string _developerKey, string _gameKey)
 		{
 			try
 			{
-				Debug.Log("1. Init");
-				OmniSdkInterfaceOSX.init();
+				// create the instance
+				OmniSdkInterface.create();
 
-				Debug.Log("2. Done");
+				// init the SDK
+				OmniSdkInterface.init(_developerKey, _gameKey);
+
+				return true;
 			}
 			catch(Exception e)
 			{
 				Debug.LogError("OmniSdk.init: Exception caught.");
 				Debug.LogError(e.Message);
+
+				return false;
 			}			
 		}
 
-		public	void	close()
+		private	void	destroy()
 		{
 			try
 			{
-				Debug.Log("1. Closing");
-				OmniSdkInterfaceOSX.close();
-				Debug.Log("2. Done");
+				// destroy it
+				OmniSdkInterface.destroy();
 			}
 			catch(Exception e)
 			{
-				Debug.LogError("OmniSdk.close: Exception caught.");
+				Debug.LogError("OmniSdk.destroy: Exception caught.");
 				Debug.LogError(e.Message);
 			}
 		}
 
 		~OmniSdk()
 		{
-			this.close();
+			this.destroy();
 		}
 
-		[MonoPInvokeCallback(typeof(OmniSdkInterfaceOSX.debugCallback))]
-		static	void	OnDebugCallback(IntPtr request, int color, int size)
+		[MonoPInvokeCallback(typeof(OmniSdkInterface.debugCallback))]
+		private	static	void	OnDebugCallback(IntPtr _request, int _color, int _size)
 		{
 			//Ptr to string
-			string debug_string = Marshal.PtrToStringAnsi(request, size);
+			string debug_string = Marshal.PtrToStringAnsi(_request, _size);
 
 			//Add Specified Color
 			debug_string =
 				String.Format("{0}{1}{2}{3}{4}",
 				"<color=",
-				((Color)color).ToString(),
+				((Color)_color).ToString(),
 				">",
 				debug_string,
 				"</color>"
