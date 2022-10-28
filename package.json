@@ -12,7 +12,7 @@
 		{
 			"displayName": "Omnislash SDK Sample",
 			"description": "Sample scene to show how to integrate the SDK, change player status and take screenshots.",
-			"path": "Samples~/OmniSdkSample"
+			"path": "Samples/OmniSdkSample/"
 		}
 	]
 }
