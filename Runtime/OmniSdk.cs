@@ -22,12 +22,21 @@ namespace omnislash_sdk
 			if (ok == false)
 				return false;
 
+			// get the folder where to save the log file
+			string	path = Application.persistentDataPath + "/Omnislash/";
+			Debug.Log("Log path: " + path);
+
 			// init
-			ok = OmniSdk.Instance.init(_developerKey, _gameKey);
+			ok = OmniSdk.Instance.init(_developerKey, _gameKey, path);
 			if (ok == false)
 				return false;
 
 			return true;		
+		}
+
+		public	static	int	InMenu(string _description)
+		{
+			return OmniSdk.Instance.inMenu(_description);
 		}
 
 		public	static	void	Destroy()
@@ -88,7 +97,7 @@ namespace omnislash_sdk
 		{
 		}
 
-		private	bool	init(string _developerKey, string _gameKey)
+		private	bool	init(string _developerKey, string _gameKey, string _localEventsPath)
 		{
 			try
 			{
@@ -96,7 +105,7 @@ namespace omnislash_sdk
 				OmniSdkInterface.create();
 
 				// init the SDK
-				OmniSdkInterface.init(_developerKey, _gameKey);
+				OmniSdkInterface.init(_developerKey, _gameKey, _localEventsPath);
 
 				return true;
 			}
@@ -107,6 +116,22 @@ namespace omnislash_sdk
 
 				return false;
 			}			
+		}
+
+		private	int	inMenu(string _description)
+		{
+			try
+			{
+				// init the SDK
+				return OmniSdkInterface.inMenu(_description);
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.inMenu: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return -100;
+			}				
 		}
 
 		private	void	destroy()

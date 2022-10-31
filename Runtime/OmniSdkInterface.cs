@@ -22,7 +22,10 @@ namespace omnislash_sdk
 		public	static	extern	void	create();
 
 		[DllImport("OmniSdk")]
-		public	static	extern	void	init(string _developerKey, string _gameKey);
+		public	static	extern	void	init(string _developerKey, string _gameKey, string _localEventsPath);
+
+		[DllImport("OmniSdk")]
+		public	static	extern	int		inMenu(string _description);
 
 		[DllImport("OmniSdk")]
 		public	static	extern	void	destroy();

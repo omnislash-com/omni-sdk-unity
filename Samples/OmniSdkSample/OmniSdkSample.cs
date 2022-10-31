@@ -14,6 +14,21 @@ public	class	OmniSdkSample : MonoBehaviour
 		OmniSdk.Init(this.m_developerKey, this.m_gameKey, this.m_logLevel);
 	}
 
+	public	void	onBtnInMenuSettings()
+	{
+		OmniSdk.InMenu("settings");
+	}
+
+	public	void	onBtnInMenuShop()
+	{
+		OmniSdk.InMenu("shop");
+	}
+
+	public	void	onBtnInMenuPlay()
+	{
+		OmniSdk.InMenu("play");
+	}
+
 	public	void	onBtnClose()
 	{
 		OmniSdk.Destroy();
