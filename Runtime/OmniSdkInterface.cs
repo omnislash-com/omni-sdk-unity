@@ -28,6 +28,9 @@ namespace omnislash_sdk
 		public	static	extern	int		inMenu(string _description);
 
 		[DllImport("OmniSdk")]
+		public	static	extern	int		screenshot(int _moment, int _delayMSec, string _caption, string[] _tags, int _tagsCount, string[] _metaDataKeys, String[] _metaDataValues, int _metaDataCount);
+
+		[DllImport("OmniSdk")]
 		public	static	extern	void	destroy();
 	}
 }

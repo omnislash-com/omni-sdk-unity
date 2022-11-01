@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System;
 using UnityEngine;
 using AOT;
+using System.Collections.Generic;
 
 namespace omnislash_sdk
 {
@@ -37,6 +38,16 @@ namespace omnislash_sdk
 		public	static	int	InMenu(string _description)
 		{
 			return OmniSdk.Instance.inMenu(_description);
+		}
+
+		public	static	int	Screenshot(int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
+		{
+			return OmniSdk.Instance.screenshot(_moment, 0, _caption, _tags, _metaData);
+		}
+
+		public	static	int	ScreenshotPast(int _delayMSec, int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
+		{
+			return OmniSdk.Instance.screenshot(_moment, _delayMSec, _caption, _tags, _metaData);
 		}
 
 		public	static	void	Destroy()
@@ -122,8 +133,54 @@ namespace omnislash_sdk
 		{
 			try
 			{
-				// init the SDK
+				// call the SDK
 				return OmniSdkInterface.inMenu(_description);
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.inMenu: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return -100;
+			}				
+		}
+
+		private	int	screenshot(int _moment, int _delayMSec, string _caption, List<string> _tags, Dictionary<string, object> _metaData)
+		{
+			try
+			{
+				// cap moment
+				if (_moment < 0)
+					_moment = 0;
+				else if (_moment > 100)
+					_moment = 100;
+
+				// make sure we have a negative delay
+				if (_delayMSec > 0)
+					_delayMSec = - _delayMSec;
+
+				// ensure arrays are good
+				if (_tags == null)
+					_tags = new List<string>();
+				if (_metaData == null)
+					_metaData = new Dictionary<string, object>();
+
+				// convert parameters
+				int			tagsCount = _tags.Count;
+				string[]	tags = _tags.ToArray();
+				int			metaDataCount = _metaData.Count;
+				string[]	metaDataKeys = new string[metaDataCount];
+				string[]	metaDataValues = new string[metaDataCount];
+				int 		i = 0;
+				foreach(var pair in _metaData)
+				{
+					metaDataKeys[i] = pair.Key;
+					metaDataValues[i] = pair.Value.ToString();
+					i++;
+				}
+
+				// init the SDK
+				return OmniSdkInterface.screenshot(_moment, _delayMSec, _caption, tags, tagsCount, metaDataKeys, metaDataValues, metaDataCount);
 			}
 			catch(Exception e)
 			{
