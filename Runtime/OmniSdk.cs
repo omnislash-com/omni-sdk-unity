@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System;
+using System.Text;
 using UnityEngine;
 using AOT;
 using System.Collections.Generic;
@@ -12,6 +13,14 @@ namespace omnislash_sdk
 		Warning = 2,
 		Error = 3,
 		None = 4
+	}
+
+	public	enum	UrlType
+	{
+		SignUp,
+		UserPage,
+		GamePage,
+		GameMedia
 	}
 
 	public	class	OmniSdk
@@ -48,6 +57,36 @@ namespace omnislash_sdk
 		public	static	int	ScreenshotPast(int _delayMSec, int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
 		{
 			return OmniSdk.Instance.screenshot(_moment, _delayMSec, _caption, _tags, _metaData);
+		}
+
+		public	static	bool	IsInstalled()
+		{
+			return OmniSdk.Instance.isInstalled();
+		}
+
+		public	static	bool	IsRunning()
+		{
+			return OmniSdk.Instance.isRunning();
+		}
+
+		public	static	string	GetSignUpURL()
+		{
+			return OmniSdk.Instance.getUrl(UrlType.SignUp);
+		}
+
+		public	static	string	GetUserPageURL()
+		{
+			return OmniSdk.Instance.getUrl(UrlType.UserPage);
+		}
+
+		public	static	string	GetGamePageURL()
+		{
+			return OmniSdk.Instance.getUrl(UrlType.GamePage);
+		}
+
+		public	static	string	GetGameMediaURL(Dictionary<string, string> _filters = null)
+		{
+			return OmniSdk.Instance.getUrl(UrlType.GameMedia, _filters);
 		}
 
 		public	static	void	Destroy()
@@ -188,6 +227,71 @@ namespace omnislash_sdk
 				Debug.LogError(e.Message);
 
 				return -100;
+			}				
+		}
+
+		private	bool	isInstalled()
+		{
+			try
+			{
+				return OmniSdkInterface.isInstalled();
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.isInstalled: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return false;
+			}			
+		}
+
+		private	bool	isRunning()
+		{
+			try
+			{
+				return OmniSdkInterface.isRunning();
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.isRunning: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return false;
+			}			
+		}
+
+		private	string	getUrl(UrlType _type, Dictionary<string, string> _params = null)
+		{
+			try
+			{
+				// make sure we have something in the params
+				if (_params == null)
+					_params = new Dictionary<string, string>();
+
+				int				strLen = 500;
+				StringBuilder	str = new StringBuilder(strLen);
+				int				paramsCount = _params.Count;
+				string[]		paramsKeys = new string[paramsCount];
+				string[]		paramsValues = new string[paramsCount];
+				int 			i = 0;
+				foreach(var pair in _params)
+				{
+					paramsKeys[i] = pair.Key;
+					paramsValues[i] = pair.Value;
+					i++;
+				}
+
+				// call it
+				OmniSdkInterface.getUrl((int) _type, paramsKeys, paramsValues, paramsCount, str, strLen);
+
+				return str.ToString();
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.getUrl: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return "";
 			}				
 		}
 

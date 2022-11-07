@@ -9,9 +9,17 @@ public	class	OmniSdkSample : MonoBehaviour
 	public	string					m_developerKey = "testkey";
 	public	string					m_gameKey = "youriding";
 
+	public	GameObject				m_installed_on;
+	public	GameObject				m_installed_off;
+	public	GameObject				m_running_on;
+	public	GameObject				m_running_off;
+
 	public	void	onBtnInit()
 	{
 		OmniSdk.Init(this.m_developerKey, this.m_gameKey, this.m_logLevel);
+
+		// update status
+		this.onBtnUpdateStatus();
 	}
 
 	public	void	onBtnInMenuSettings()
@@ -67,6 +75,48 @@ public	class	OmniSdkSample : MonoBehaviour
 			{"filter:maneuver", "forward_spin"},
 			{"points", 12450},
 		});
+	}
+
+	public	void	onBtnSignUpUrl()
+	{
+		string	url = OmniSdk.GetSignUpURL();
+		this.openUrl(url);
+	}
+
+	public	void	onBtnUserPageUrl()
+	{
+		string	url = OmniSdk.GetUserPageURL();
+		this.openUrl(url);
+	}
+
+	public	void	onBtnGamePageUrl()
+	{
+		string	url = OmniSdk.GetGamePageURL();
+		this.openUrl(url);
+	}
+
+	public	void	onBtnGameMediaUrl()
+	{
+		string	url = OmniSdk.GetGameMediaURL();
+		this.openUrl(url);
+	}
+
+	protected	void	openUrl(string _url)
+	{
+		Application.OpenURL(_url);
+	}
+
+	public	void	onBtnUpdateStatus()
+	{
+		// check if it's installed and running
+		bool	isInstalled = OmniSdk.IsInstalled();
+		bool	isRunning = OmniSdk.IsRunning();
+
+		// update the status
+		this.m_installed_on.SetActive(isInstalled);
+		this.m_installed_off.SetActive(!isInstalled);
+		this.m_running_on.SetActive(isRunning);
+		this.m_running_off.SetActive(!isRunning);
 	}
 
 	public	void	onBtnClose()
