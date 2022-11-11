@@ -25,8 +25,24 @@ namespace omnislash_sdk
 
 	public	class	OmniSdk
 	{
-		public	static	bool	Init(string _developerKey, string _gameKey, LogLevel _logLevel = LogLevel.Info)
+
+		public	static	bool	IsSupported()
 		{
+			#if UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+				return true;
+			#else
+				return false;
+			#endif
+		}
+
+		public	static	bool	Init(string _gamePublicKey, string _gameCode, LogLevel _logLevel = LogLevel.Info)
+		{
+			// save the game code
+			OmniSdk.gameCode = _gameCode;
+
+			if (OmniSdk.IsSupported() == false)
+				return false;
+
 			// set up logs
 			bool	ok = OmniSdk.SetUpLogs(_logLevel);
 			if (ok == false)
@@ -37,7 +53,7 @@ namespace omnislash_sdk
 			Debug.Log("Log path: " + path);
 
 			// init
-			ok = OmniSdk.Instance.init(_developerKey, _gameKey, path);
+			ok = OmniSdk.Instance.init(_gamePublicKey, _gameCode, path);
 			if (ok == false)
 				return false;
 
@@ -46,47 +62,62 @@ namespace omnislash_sdk
 
 		public	static	int	InMenu(string _description)
 		{
+			if (OmniSdk.IsSupported() == false)
+				return -101;
+				
 			return OmniSdk.Instance.inMenu(_description);
 		}
 
 		public	static	int	Screenshot(int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
 		{
+			if (OmniSdk.IsSupported() == false)
+				return -101;
+
 			return OmniSdk.Instance.screenshot(_moment, 0, _caption, _tags, _metaData);
 		}
 
 		public	static	int	ScreenshotPast(int _delayMSec, int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
 		{
+			if (OmniSdk.IsSupported() == false)
+				return -101;
+
 			return OmniSdk.Instance.screenshot(_moment, _delayMSec, _caption, _tags, _metaData);
 		}
 
 		public	static	bool	IsInstalled()
 		{
+			if (OmniSdk.IsSupported() == false)
+				return false;
+
 			return OmniSdk.Instance.isInstalled();
 		}
 
 		public	static	bool	IsRunning()
 		{
+			if (OmniSdk.IsSupported() == false)
+				return false;
+				
 			return OmniSdk.Instance.isRunning();
 		}
 
 		public	static	string	GetSignUpURL()
 		{
-			return OmniSdk.Instance.getUrl(UrlType.SignUp);
+			return OmniSdk.GetUrl(UrlType.SignUp);
 		}
 
 		public	static	string	GetUserPageURL()
 		{
-			return OmniSdk.Instance.getUrl(UrlType.UserPage);
+			return OmniSdk.GetUrl(UrlType.UserPage);
 		}
 
 		public	static	string	GetGamePageURL()
 		{
-			return OmniSdk.Instance.getUrl(UrlType.GamePage);
+			return OmniSdk.GetUrl(UrlType.GamePage);
 		}
 
 		public	static	string	GetGameMediaURL(Dictionary<string, string> _filters = null)
 		{
-			return OmniSdk.Instance.getUrl(UrlType.GameMedia, _filters);
+			return OmniSdk.GetUrl(UrlType.GameMedia, _filters);
 		}
 
 		public	static	void	Destroy()
@@ -101,11 +132,59 @@ namespace omnislash_sdk
 			}
 		}
 
-
-
+		private	static	string				gameCode = "";
 		private	static	OmniSdk				instance = null;
 		private	static	readonly	object	padlock = new object();
 
+		private	static	string	GetUrl(UrlType _type, Dictionary<string, string> _filters = null)
+		{
+			// supported?
+			if (OmniSdk.IsSupported() == true)
+				return OmniSdk.GetUrl(_type, _filters);
+
+			// we cannot get the user
+			if (_type == UrlType.UserPage)
+				_type = UrlType.SignUp;
+
+			// build the url depending on the type
+			string	url = "https://omnislash.com";
+			string	utmCampaign = "";
+
+			switch(_type)
+			{
+				case UrlType.SignUp:
+					url += "/install/" + OmniSdk.gameCode;
+					utmCampaign = "install";
+					break;
+
+				case UrlType.GamePage:
+					url += "/game/" + OmniSdk.gameCode;
+					utmCampaign = "game_page";
+					break;
+
+				case UrlType.GameMedia:
+					url += "/game/" + OmniSdk.gameCode + "/media";
+					utmCampaign = "media";
+					break;
+
+			}
+
+			// make sure to add the UTMs to the params
+			if (_filters == null)
+				_filters = new Dictionary<string, string>();
+			_filters.Add("utm_source", OmniSdk.gameCode);
+			_filters.Add("utm_medium", "game");
+			_filters.Add("utm_campaign", utmCampaign);
+
+			// add all the params to the url
+			url += "?";
+			foreach(var pair in _filters)
+			{
+				url += pair.Key + "=" + pair.Value + "&";
+			}
+
+			return url;
+		}
 
 		private	static	OmniSdk	Instance
 		{
@@ -147,7 +226,7 @@ namespace omnislash_sdk
 		{
 		}
 
-		private	bool	init(string _developerKey, string _gameKey, string _localEventsPath)
+		private	bool	init(string _gamePublicKey, string _gameCode, string _localEventsPath)
 		{
 			try
 			{
@@ -155,7 +234,7 @@ namespace omnislash_sdk
 				OmniSdkInterface.create();
 
 				// init the SDK
-				OmniSdkInterface.init(_developerKey, _gameKey, _localEventsPath);
+				OmniSdkInterface.init(_gamePublicKey, _gameCode, _localEventsPath);
 
 				return true;
 			}
