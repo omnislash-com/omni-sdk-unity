@@ -194,10 +194,6 @@ namespace omnislash_sdk
 				else if (_moment > 100)
 					_moment = 100;
 
-				// make sure we have a negative delay
-				if (_delayMSec > 0)
-					_delayMSec = - _delayMSec;
-
 				// ensure arrays are good
 				if (_tags == null)
 					_tags = new List<string>();
