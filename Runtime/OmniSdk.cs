@@ -140,7 +140,7 @@ namespace omnislash_sdk
 		{
 			// supported?
 			if (OmniSdk.IsSupported() == true)
-				return OmniSdk.GetUrl(_type, _filters);
+				return OmniSdk.instance.getUrl(_type, _filters);
 
 			// we cannot get the user
 			if (_type == UrlType.UserPage)
