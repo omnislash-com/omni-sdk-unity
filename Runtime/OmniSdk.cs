@@ -29,7 +29,11 @@ namespace omnislash_sdk
 		public	static	bool	IsSupported()
 		{
 			#if UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
-				return true;
+				#if UNITY_64
+					return true;
+				#else
+					return false;
+				#endif
 			#else
 				return false;
 			#endif
