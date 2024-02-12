@@ -341,41 +341,6 @@ namespace omnislash_sdk
 			}			
 		}
 
-		private	string	getUrl(UrlType _type, Dictionary<string, string> _params = null)
-		{
-			try
-			{
-				// make sure we have something in the params
-				if (_params == null)
-					_params = new Dictionary<string, string>();
-
-				int				strLen = 500;
-				StringBuilder	str = new StringBuilder(strLen);
-				int				paramsCount = _params.Count;
-				string[]		paramsKeys = new string[paramsCount];
-				string[]		paramsValues = new string[paramsCount];
-				int 			i = 0;
-				foreach(var pair in _params)
-				{
-					paramsKeys[i] = pair.Key;
-					paramsValues[i] = pair.Value;
-					i++;
-				}
-
-				// call it
-				OmniSdkInterface.getUrl((int) _type, paramsKeys, paramsValues, paramsCount, str, strLen);
-
-				return str.ToString();
-			}
-			catch(Exception e)
-			{
-				Debug.LogError("OmniSdk.getUrl: Exception caught.");
-				Debug.LogError(e.Message);
-
-				return "";
-			}				
-		}
-
 		private	void	destroy()
 		{
 			try
