@@ -39,7 +39,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotAverage()
 	{
-		OmniSdk.EmitTrigger(20, "Average screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger("average", 20, "Average screenshot", new Dictionary<string, object> {
 			{"filter:wave", "pipeline"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "air_forward"},
@@ -49,7 +49,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotGood()
 	{
-		OmniSdk.EmitTrigger(50, "Good screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger("good", 50, "Good screenshot", new Dictionary<string, object> {
 			{"filter:wave", "cloud9"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "backflip"},
@@ -59,7 +59,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotAmazing()
 	{
-		OmniSdk.EmitTrigger(90, "Amazing screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger("amazing", 90, "Amazing screenshot", new Dictionary<string, object> {
 			{"filter:wave", "skeletonbay"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "air_reverse"},
@@ -69,7 +69,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotPast()
 	{
-		OmniSdk.EmitTrigger(70, "Back in time screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger("past", 70, "Back in time screenshot", new Dictionary<string, object> {
 			{"filter:wave", "supertubos"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "forward_spin"},

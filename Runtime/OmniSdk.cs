@@ -88,12 +88,12 @@ namespace omnislash_sdk
 			return OmniSdk.Instance.setMetadata(_metaData);
 		}
 
-		public	static	int	EmitTrigger(int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
+		public	static	int	EmitTrigger(string _action, int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
 		{
 			if (OmniSdk.IsSupported() == false)
 				return -101;
 
-			return OmniSdk.Instance.emitTrigger(_moment, _caption, _tags, _metaData);
+			return OmniSdk.Instance.emitTrigger(_action, _moment, _caption, _tags, _metaData);
 		}
 
 		public	static	bool	IsInstalled()
@@ -269,7 +269,7 @@ namespace omnislash_sdk
 			}				
 		}
 
-		private	int	emitTrigger(int _moment, string _caption, List<string> _tags, Dictionary<string, object> _metaData)
+		private	int	emitTrigger(string _action, int _moment, string _caption, List<string> _tags, Dictionary<string, object> _metaData)
 		{
 			try
 			{
@@ -300,7 +300,7 @@ namespace omnislash_sdk
 				}
 
 				// init the SDK
-				return OmniSdkInterface.emitTrigger(_moment, _caption, tags, tagsCount, metaDataKeys, metaDataValues, metaDataCount);
+				return OmniSdkInterface.emitTrigger(_action, _moment, _caption, tags, tagsCount, metaDataKeys, metaDataValues, metaDataCount);
 			}
 			catch(Exception e)
 			{

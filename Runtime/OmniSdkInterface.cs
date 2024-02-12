@@ -37,7 +37,7 @@ namespace omnislash_sdk
 		public	static	extern	int		setMetadata(string[] _metaDataKeys, string[] _metaDataValues, int _metaDataCount);
 
 		[DllImport("OmniSdk")]
-		public	static	extern	int		emitTrigger(int _moment, string _caption, string[] _tags, int _tagsCount, string[] _metaDataKeys, string[] _metaDataValues, int _metaDataCount);
+		public	static	extern	int		emitTrigger(string _action, int _moment, string _caption, string[] _tags, int _tagsCount, string[] _metaDataKeys, string[] _metaDataValues, int _metaDataCount);
 
 		[DllImport("OmniSdk")]
 		public	static	extern	bool	isInstalled();
