@@ -39,7 +39,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotAverage()
 	{
-		OmniSdk.Screenshot(20, "Average screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger(20, "Average screenshot", new Dictionary<string, object> {
 			{"filter:wave", "pipeline"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "air_forward"},
@@ -49,7 +49,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotGood()
 	{
-		OmniSdk.Screenshot(50, "Good screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger(50, "Good screenshot", new Dictionary<string, object> {
 			{"filter:wave", "cloud9"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "backflip"},
@@ -59,7 +59,7 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotAmazing()
 	{
-		OmniSdk.Screenshot(90, "Amazing screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger(90, "Amazing screenshot", new Dictionary<string, object> {
 			{"filter:wave", "skeletonbay"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "air_reverse"},
@@ -69,41 +69,12 @@ public	class	OmniSdkSample : MonoBehaviour
 
 	public	void	onBtnScreenshotPast()
 	{
-		OmniSdk.ScreenshotPast(5000, 70, "Back in time screenshot", new Dictionary<string, object> {
+		OmniSdk.EmitTrigger(70, "Back in time screenshot", new Dictionary<string, object> {
 			{"filter:wave", "supertubos"},
 			{"filter:action", "maneuver"},
 			{"filter:maneuver", "forward_spin"},
 			{"points", 12450},
 		});
-	}
-
-	public	void	onBtnSignUpUrl()
-	{
-		string	url = OmniSdk.GetSignUpURL();
-		this.openUrl(url);
-	}
-
-	public	void	onBtnUserPageUrl()
-	{
-		string	url = OmniSdk.GetUserPageURL();
-		this.openUrl(url);
-	}
-
-	public	void	onBtnGamePageUrl()
-	{
-		string	url = OmniSdk.GetGamePageURL();
-		this.openUrl(url);
-	}
-
-	public	void	onBtnGameMediaUrl()
-	{
-		string	url = OmniSdk.GetGameMediaURL();
-		this.openUrl(url);
-	}
-
-	protected	void	openUrl(string _url)
-	{
-		Application.OpenURL(_url);
 	}
 
 	public	void	onBtnUpdateStatus()

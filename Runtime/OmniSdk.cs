@@ -15,20 +15,12 @@ namespace omnislash_sdk
 		None = 4
 	}
 
-	public	enum	UrlType
-	{
-		SignUp,
-		UserPage,
-		GamePage,
-		GameMedia
-	}
-
 	public	class	OmniSdk
 	{
 
 		public	static	bool	IsSupported()
 		{
-			#if UNITY_EDITOR_WIN || UNITY_EDITOR_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+			#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 				#if UNITY_64
 					return true;
 				#else
@@ -72,20 +64,36 @@ namespace omnislash_sdk
 			return OmniSdk.Instance.inMenu(_description);
 		}
 
-		public	static	int	Screenshot(int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
+		public	static	int	SetUserId(string _value)
 		{
 			if (OmniSdk.IsSupported() == false)
 				return -101;
-
-			return OmniSdk.Instance.screenshot(_moment, 0, _caption, _tags, _metaData);
+				
+			return OmniSdk.Instance.setUserId(_value);
 		}
 
-		public	static	int	ScreenshotPast(int _delayMSec, int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
+		public	static	int	SetUsername(string _value)
+		{
+			if (OmniSdk.IsSupported() == false)
+				return -101;
+				
+			return OmniSdk.Instance.setUsername(_value);
+		}
+
+		public	static	int	SetMetadata(Dictionary<string, object> _metaData = null)
 		{
 			if (OmniSdk.IsSupported() == false)
 				return -101;
 
-			return OmniSdk.Instance.screenshot(_moment, _delayMSec, _caption, _tags, _metaData);
+			return OmniSdk.Instance.setMetadata(_metaData);
+		}
+
+		public	static	int	EmitTrigger(int _moment = 0, string _caption = "", Dictionary<string, object> _metaData = null, List<string> _tags = null)
+		{
+			if (OmniSdk.IsSupported() == false)
+				return -101;
+
+			return OmniSdk.Instance.emitTrigger(_moment, _caption, _tags, _metaData);
 		}
 
 		public	static	bool	IsInstalled()
@@ -104,26 +112,6 @@ namespace omnislash_sdk
 			return OmniSdk.Instance.isRunning();
 		}
 
-		public	static	string	GetSignUpURL()
-		{
-			return OmniSdk.GetUrl(UrlType.SignUp);
-		}
-
-		public	static	string	GetUserPageURL()
-		{
-			return OmniSdk.GetUrl(UrlType.UserPage);
-		}
-
-		public	static	string	GetGamePageURL()
-		{
-			return OmniSdk.GetUrl(UrlType.GamePage);
-		}
-
-		public	static	string	GetGameMediaURL(Dictionary<string, string> _filters = null)
-		{
-			return OmniSdk.GetUrl(UrlType.GameMedia, _filters);
-		}
-
 		public	static	void	Destroy()
 		{
 			lock(OmniSdk.padlock)
@@ -139,56 +127,6 @@ namespace omnislash_sdk
 		private	static	string				gameCode = "";
 		private	static	OmniSdk				instance = null;
 		private	static	readonly	object	padlock = new object();
-
-		private	static	string	GetUrl(UrlType _type, Dictionary<string, string> _filters = null)
-		{
-			// supported?
-			if (OmniSdk.IsSupported() == true)
-				return OmniSdk.instance.getUrl(_type, _filters);
-
-			// we cannot get the user
-			if (_type == UrlType.UserPage)
-				_type = UrlType.SignUp;
-
-			// build the url depending on the type
-			string	url = "https://omnislash.com";
-			string	utmCampaign = "";
-
-			switch(_type)
-			{
-				case UrlType.SignUp:
-					url += "/install/" + OmniSdk.gameCode;
-					utmCampaign = "install";
-					break;
-
-				case UrlType.GamePage:
-					url += "/game/" + OmniSdk.gameCode;
-					utmCampaign = "game_page";
-					break;
-
-				case UrlType.GameMedia:
-					url += "/game/" + OmniSdk.gameCode + "/media";
-					utmCampaign = "media";
-					break;
-
-			}
-
-			// make sure to add the UTMs to the params
-			if (_filters == null)
-				_filters = new Dictionary<string, string>();
-			_filters.Add("utm_source", OmniSdk.gameCode);
-			_filters.Add("utm_medium", "game");
-			_filters.Add("utm_campaign", utmCampaign);
-
-			// add all the params to the url
-			url += "?";
-			foreach(var pair in _filters)
-			{
-				url += pair.Key + "=" + pair.Value + "&";
-			}
-
-			return url;
-		}
 
 		private	static	OmniSdk	Instance
 		{
@@ -267,7 +205,71 @@ namespace omnislash_sdk
 			}				
 		}
 
-		private	int	screenshot(int _moment, int _delayMSec, string _caption, List<string> _tags, Dictionary<string, object> _metaData)
+		private	int	setUserId(string _value)
+		{
+			try
+			{
+				// call the SDK
+				return OmniSdkInterface.setUserId(_value);
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.setUserId: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return -100;
+			}				
+		}
+
+		private	int	setUsername(string _value)
+		{
+			try
+			{
+				// call the SDK
+				return OmniSdkInterface.setUsername(_value);
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.setUsername: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return -100;
+			}				
+		}
+
+		private	int	setMetadata(Dictionary<string, object> _metaData)
+		{
+			try
+			{
+				// ensure arrays are good
+				if (_metaData == null)
+					_metaData = new Dictionary<string, object>();
+
+				// convert parameters
+				int			metaDataCount = _metaData.Count;
+				string[]	metaDataKeys = new string[metaDataCount];
+				string[]	metaDataValues = new string[metaDataCount];
+				int 		i = 0;
+				foreach(var pair in _metaData)
+				{
+					metaDataKeys[i] = pair.Key;
+					metaDataValues[i] = pair.Value.ToString();
+					i++;
+				}
+
+				// init the SDK
+				return OmniSdkInterface.setMetadata(metaDataKeys, metaDataValues, metaDataCount);
+			}
+			catch(Exception e)
+			{
+				Debug.LogError("OmniSdk.setMetadata: Exception caught.");
+				Debug.LogError(e.Message);
+
+				return -100;
+			}				
+		}
+
+		private	int	emitTrigger(int _moment, string _caption, List<string> _tags, Dictionary<string, object> _metaData)
 		{
 			try
 			{
@@ -298,11 +300,11 @@ namespace omnislash_sdk
 				}
 
 				// init the SDK
-				return OmniSdkInterface.screenshot(_moment, _delayMSec, _caption, tags, tagsCount, metaDataKeys, metaDataValues, metaDataCount);
+				return OmniSdkInterface.emitTrigger(_moment, _caption, tags, tagsCount, metaDataKeys, metaDataValues, metaDataCount);
 			}
 			catch(Exception e)
 			{
-				Debug.LogError("OmniSdk.inMenu: Exception caught.");
+				Debug.LogError("OmniSdk.emitTrigger: Exception caught.");
 				Debug.LogError(e.Message);
 
 				return -100;

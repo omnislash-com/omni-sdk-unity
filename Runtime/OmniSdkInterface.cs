@@ -28,16 +28,22 @@ namespace omnislash_sdk
 		public	static	extern	int		inMenu(string _description);
 
 		[DllImport("OmniSdk")]
-		public	static	extern	int		screenshot(int _moment, int _delayMSec, string _caption, string[] _tags, int _tagsCount, string[] _metaDataKeys, String[] _metaDataValues, int _metaDataCount);
+		public	static	extern	int		setUserId(string _value);
+
+		[DllImport("OmniSdk")]
+		public	static	extern	int		setUsername(string _value);
+
+		[DllImport("OmniSdk")]
+		public	static	extern	int		setMetadata(string[] _metaDataKeys, string[] _metaDataValues, int _metaDataCount);
+
+		[DllImport("OmniSdk")]
+		public	static	extern	int		emitTrigger(int _moment, string _caption, string[] _tags, int _tagsCount, string[] _metaDataKeys, string[] _metaDataValues, int _metaDataCount);
 
 		[DllImport("OmniSdk")]
 		public	static	extern	bool	isInstalled();
 
 		[DllImport("OmniSdk")]
 		public	static	extern	bool	isRunning();
-
-		[DllImport("OmniSdk")]
-		public	static	extern	void	getUrl(int _type, string[] _paramKeys, string[] _paramValues, int _paramCount, StringBuilder _str, int _strLen);
 
 		[DllImport("OmniSdk")]
 		public	static	extern	void	destroy();
